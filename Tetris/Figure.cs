@@ -11,6 +11,7 @@ namespace Tetris
         public int x;
         public int y;
         public int[,] form;
+        public int sizeMatrix;
 
         public Figure(int coord_x, int coord_y)
         {
@@ -18,10 +19,11 @@ namespace Tetris
             y = coord_y;
             form = new int[3, 3]
             {
-                {0, 1, 0 },
                 {0, 1, 1 },
-                {0, 0, 1 },
+                {0, 1, 1 },
+                {0, 0, 0 },
             };
+            sizeMatrix = 3;
         }
 
         public void MoveDown()

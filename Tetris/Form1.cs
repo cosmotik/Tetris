@@ -15,6 +15,8 @@ namespace Tetris
         Figure currentFigure;
         int size;
         int[,] map = new int[16, 8];
+        int RemovedLines;
+        int score;
         public Form1()
         {
             InitializeComponent();
@@ -29,41 +31,174 @@ namespace Tetris
         public void Initialize()
         {
             size = 25;
+            score = 0;
+            RemovedLines = 0;
 
             currentFigure = new Figure(3, 0);
 
-            timer1.Interval = 500;
+            label1.Text = "Score: " + score;
+            label2.Text = "Lines: " + RemovedLines;
+
+            this.KeyUp += new KeyEventHandler(keyFunc);
+
+            timer1.Interval = 200;
             timer1.Tick += new EventHandler(update);
             timer1.Start();
 
             Invalidate();
         }
 
+        private void keyFunc(object sender, KeyEventArgs e)
+        {
+            switch(e.KeyCode)
+            {
+                case Keys.Space:
+                    break;
+                case Keys.Right:
+                    if(!CollideHorizont(1))
+                    {
+                        ResetArea();
+                        currentFigure.MoveRight();
+                        Merge();
+                        Invalidate();
+                    }
+                    break;
+                case Keys.Left:
+                    if (!CollideHorizont(-1))
+                    {
+                        ResetArea();
+                        currentFigure.MoveLeft();
+                        Merge();
+                        Invalidate();
+                    }
+                    break;
+            }
+        }
+
         private void update(object sender, EventArgs e)
         {
             ResetArea();
-            currentFigure.MoveDown();
+            if(!Collide())
+            {
+                currentFigure.MoveDown();
+            }
+            else
+            {
+                Merge();
+                DeleteLine();
+                currentFigure = new Figure(3, 0);
+            }
             Merge();
             Invalidate();
         }
 
+        public void DeleteLine()
+        {
+            int count = 0;
+            int CurrentRemovedLines = 0;
+            for (int i = 0; i < 16; i++)
+            {
+                count = 0;
+                for (int j = 0; j < 8; j++)
+                {
+                    if(map[i, j] != 0)
+                    {
+                        count++;
+                    }
+                }
+                if(count == 8)
+                {
+                    CurrentRemovedLines++;
+                    for (int k = i; k >= 1; k--)
+                    {
+                        for (int o = 0; o < 8; o++)
+                        {
+                            map[k, o] = map[k - 1, o];
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < CurrentRemovedLines; i++)
+            {
+                score += 10 * (i + 1);
+            }
+            RemovedLines += CurrentRemovedLines;
+
+            label1.Text = "Score: " + score;
+            label2.Text = "Lines: " + RemovedLines;
+        }
+
         public void Merge()
         {
-            for(int i = currentFigure.y; i < currentFigure.y + 3; i++)
+            for(int i = currentFigure.y; i < currentFigure.y + currentFigure.sizeMatrix; i++)
             {
-                for (int j = currentFigure.x; j < currentFigure.x + 3; j++)
+                for (int j = currentFigure.x; j < currentFigure.x + currentFigure.sizeMatrix; j++)
                 {
+                    if(currentFigure.form[i - currentFigure.y, j - currentFigure.x] != 0)
                     map[i, j] = currentFigure.form[i - currentFigure.y, j - currentFigure.x];
                 }
             }
         }
+        public bool Collide()
+        {
+            for (int i = currentFigure.y + currentFigure.sizeMatrix - 1; i >= currentFigure.y; i--)
+            {
+                for (int j = currentFigure.x; j < currentFigure.x + currentFigure.sizeMatrix; j++)
+                {
+                    if(currentFigure.form[i - currentFigure.y, j - currentFigure.x] != 0)
+                    {
+                        if (i + 1 == 16)
+                            return true;
+                        if(map[i + 1, j] != 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool CollideHorizont(int dir)
+        {
+            for (int i = currentFigure.y; i < currentFigure.y + currentFigure.sizeMatrix; i++)
+            {
+                for (int j = currentFigure.x; j < currentFigure.x + currentFigure.sizeMatrix; j++)
+                {
+                    if (currentFigure.form[i - currentFigure.y, j - currentFigure.x] != 0)
+                    {
+                        if (j + 1 * dir > 7 || j + 1 * dir < 0)
+                            return true;
+
+                        if(map[i, j + 1 * dir] != 0)
+                        {
+                            if(j - currentFigure.x + 1 * dir >= currentFigure.sizeMatrix || j - currentFigure.x + 1 * dir < 0)
+                            {
+                                return true;
+                            }
+                            if (currentFigure.form[i - currentFigure.y, j - currentFigure.x + 1 * dir] == 0)
+                                return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         public void ResetArea()
         {
-            for (int i = currentFigure.y; i < currentFigure.y + 3; i++)
+            for (int i = currentFigure.y; i < currentFigure.y + currentFigure.sizeMatrix; i++)
             {
-                for (int j = currentFigure.x; j < currentFigure.x + 3; j++)
+                for (int j = currentFigure.x; j < currentFigure.x + currentFigure.sizeMatrix; j++)
                 {
-                    map[i, j] = 0;
+                    if(i >= 0 && j >= 0 && i < 16 && j < 8)
+                    {
+                        if(currentFigure.form[i - currentFigure.y, j - currentFigure.x] != 0) 
+                        { 
+                            map[i, j] = 0;
+                        }
+
+                    }
                 }
             }
         }
