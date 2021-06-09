@@ -27,7 +27,7 @@ namespace Tetris
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            Controls_label.Text = "A - rotate figure\n" + "Space - drop figure\n" + "LeftKey - move figure Left\n" + "RightKey - move figure right";
         }
 
         public void Initialize() // initialize variables    
@@ -61,6 +61,7 @@ namespace Tetris
                         currentFigure.RotateFigure();
                         Merge();
                         Invalidate();
+
                     }
                     break;
 
@@ -332,11 +333,6 @@ namespace Tetris
             DrawPole(e.Graphics);
             DrawFigure(e.Graphics);
             ShowNextFigure(e.Graphics);
-        }
-
-        private void HELP_Button_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("A - rotate figure\n" + "Space - drop figure\n" + "LeftKey - move figure Left\n" + "RightKey - move figure right");
         }
     }
 }
