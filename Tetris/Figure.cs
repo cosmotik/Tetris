@@ -107,7 +107,7 @@ namespace Tetris
             }
             figure = tempFigure;
 
-            int offset1 = (8 - (x + FigureSize)); // when turning against the wall of the map, it does not throw an exception.
+            int offset1 = (10 - (x + FigureSize)); // when turning against the wall of the map, it does not throw an exception.
             if (offset1 < 0)
             {
                 for (int i = 0; i < Math.Abs(offset1); i++)

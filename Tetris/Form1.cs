@@ -14,7 +14,7 @@ namespace Tetris
     {
         Figure currentFigure;
         int size;
-        int[,] map = new int[16, 8];
+        int[,] map = new int[20, 10];
         int RemovedLines;
         int score;
         int Interval;
@@ -30,7 +30,7 @@ namespace Tetris
 
         }
 
-        public void Initialize() // initialize variables
+        public void Initialize() // initialize variables    
         {
             size = 25;
             score = 0;
@@ -136,9 +136,9 @@ namespace Tetris
 
                 if(Collide()) // if the figure collide when spawning, then we have lost
                 {
-                    for (int i = 0; i < 16; i++)
+                    for (int i = 0; i < 20; i++)
                     {
-                        for (int j = 0; j < 8; j++)
+                        for (int j = 0; j < 10; j++)
                         {
                             map[i, j] = 0;
                         }
@@ -156,10 +156,10 @@ namespace Tetris
         {
             int count = 0;
             int CurrentRemovedLines = 0;
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 20; i++)
             {
                 count = 0;
-                for (int j = 0; j < 8; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     if(map[i, j] != 0)
                     {
@@ -171,7 +171,7 @@ namespace Tetris
                     CurrentRemovedLines++;
                     for (int k = i; k >= 1; k--)
                     {
-                        for (int o = 0; o < 8; o++)
+                        for (int o = 0; o < 10; o++)
                         {
                             map[k, o] = map[k - 1, o];
                         }
@@ -200,7 +200,7 @@ namespace Tetris
             {
                 for (int j = currentFigure.x; j < currentFigure.x + currentFigure.FigureSize; j++)
                 {
-                    if(j >= 0 && j <= 7)
+                    if(j >= 0 && j <= 9)
                     {
                         if (map[i, j] != 0 && currentFigure.figure[i - currentFigure.y, j - currentFigure.x] == 0)
                             return true;
@@ -230,7 +230,7 @@ namespace Tetris
                 {
                     if (currentFigure.figure[i - currentFigure.y, j - currentFigure.x] != 0)
                     {
-                        if (i + 1 == 16)
+                        if (i + 1 == 20)
                             return true;
                         if (map[i + 1, j] != 0)
                         {
@@ -250,7 +250,7 @@ namespace Tetris
                 {
                     if (currentFigure.figure[i - currentFigure.y, j - currentFigure.x] != 0)
                     {
-                        if (j + 1 * dir > 7 || j + 1 * dir < 0)
+                        if (j + 1 * dir > 9 || j + 1 * dir < 0)
                             return true;
 
                         if(map[i, j + 1 * dir] != 0)
@@ -274,7 +274,7 @@ namespace Tetris
             {
                 for (int j = currentFigure.x; j < currentFigure.x + currentFigure.FigureSize; j++)
                 {
-                    if(i >= 0 && j >= 0 && i < 16 && j < 8)
+                    if(i >= 0 && j >= 0 && i < 20 && j < 10)
                     {
                         if(currentFigure.figure[i - currentFigure.y, j - currentFigure.x] != 0) 
                         { 
@@ -287,9 +287,9 @@ namespace Tetris
         }
         public void DrawFigure(Graphics e) // draws figures on the map
         {
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 20; i++)
             {
-                for (int j = 0; j < 8; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     if(map[i, j] == 1)
                     {
@@ -317,13 +317,13 @@ namespace Tetris
 
         public void DrawPole(Graphics g) // playing field
         {
-            for (int i = 0; i <= 16; i++)
+            for (int i = 0; i <= 20; i++)
             {
-                g.DrawLine(Pens.Black, new Point(50, 50 + i * size), new Point(50 + 8 * size, 50 + i * size));
+                g.DrawLine(Pens.Black, new Point(50, 50 + i * size), new Point(50 + 10 * size, 50 + i * size));
             }
-            for (int i = 0; i <= 8; i++)
+            for (int i = 0; i <= 10; i++)
             {
-                g.DrawLine(Pens.Black, new Point(50 + i * size, 50), new Point(50 + i * size, 50 + 16 * size));
+                g.DrawLine(Pens.Black, new Point(50 + i * size, 50), new Point(50 + i * size, 50 + 20 * size));
             }
         }
 
@@ -332,6 +332,11 @@ namespace Tetris
             DrawPole(e.Graphics);
             DrawFigure(e.Graphics);
             ShowNextFigure(e.Graphics);
+        }
+
+        private void HELP_Button_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("A - rotate figure\n" + "Space - drop figure\n" + "LeftKey - move figure Left\n" + "RightKey - move figure right");
         }
     }
 }
